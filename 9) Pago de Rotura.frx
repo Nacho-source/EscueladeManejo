@@ -1,39 +1,15 @@
-Private Sub cmdCerrar_Click()
-Form9.Hide
+Call Ejecutar_Comando(sql, cn)
+
+Set Form9.dgAlumno.DataSource = rs
+
 End Sub
 
-Private Sub cmdSiguiente_Click()
-If (txtAlumno.Text = "") Then
-    msj = MsgBox("Seleccione un alumno", vbExclamation)
-    Else
-    Var3 = InputBox("Ingrese monto de la rotura")
-    Form6.lstVehiculo.AddItem "Monto de la Rotura: " & Var3
-    
-    sql = "select nombre, apellido from alumno a, persona p where p.idpersona=a.idpersona and idalumno='" & Var & "'"
-    Call Ejecutar_Comando(sql, cn)
-    
-    If (rs.RecordCount <> 0) Then
-        rs.MoveFirst
-        Do While (rs.EOF = False)
-            Varalf = rs.Fields(0) & " " & rs.Fields(1)
-            rs.MoveFirst
-        Loop
-    End If
-    
-    Form6.lstVehiculo.AddItem "Alumno que causó la rotura: " & Varalf
-    
-    lblAlumno.Visible = False
-    lblAlumno2.Visible = False
-    txtAlumno.Visible = False
-    cmdSiguiente.Visible = False
-    cmdCerrar.Visible = True
-    Form9.Hide
-End If
-End Sub
+Private Sub cmdVolver_Click()
 
-Private Sub dgAlumno_Click()
-dgAlumno.MarqueeStyle = dbgHighlightRowRaiseCell
-Var2 = dgAlumno.Columns(0)
-txtAlumno.Text = Var2
+txtAlumno.Text = ""
+txtVehiculo.Text = ""
+txtMonto.Text = ""
 
+Form10.Hide
+Form0.Show
 End Sub
