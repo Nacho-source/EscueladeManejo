@@ -1,0 +1,100 @@
+Private Sub cmdInfo_Click()
+If (txtInstructor.Text = "") Then
+    msj = MsgBox("INGRESE DATOS", vbExclamation, "ERROR")
+Else
+    sql = "select idInstructor from instructor where idinstructor=" & txtInstructor.Text & ""
+    Call Ejecutar_Comando(sql, cn)
+    
+    If (rs.RecordCount = 0) Then
+        msj = MsgBox("EL INSTRUCTOR NO EXISTE. REVISE SUS INGRESOS", vbCritical, "ERROR")
+            
+    Else
+        lstInfo.Clear
+        lstInfo.Visible = True
+        dgJustificativo.ClearFields
+        dgJustificativo.Visible = True
+        dgAsistencia.ClearFields
+        dgAsistencia.Visible = True
+        
+        sql = "select nombre from instructor i, persona p Where (i.idPersona = p.idPersona) and idInstructor= " & txtInstructor.Text & ""
+        Call Ejecutar_Comando(sql, cn)
+        
+        If (rs.RecordCount <> 0) Then
+            rs.MoveFirst
+            Do While rs.EOF = False
+                Varalf = rs.Fields(0)
+                rs.MoveNext
+            Loop
+        End If
+        
+        lstInfo.AddItem "Nombre del Instructor: " & Varalf
+        
+        sql = "select apellido from instructor i, persona p where (i.idPersona=p.idPersona) and idInstructor= " & txtInstructor.Text & ""
+        Call Ejecutar_Comando(sql, cn)
+        
+        If (rs.RecordCount <> 0) Then
+            rs.MoveFirst
+            Do While rs.EOF = False
+                Varalf = rs.Fields(0)
+                rs.MoveNext
+            Loop
+        End If
+        
+        lstInfo.AddItem "Apellido del Instructor: " & Varalf
+        
+        sql = "select FIngreso from instructor where idInstructor=" & txtInstructor & ""
+        Call Ejecutar_Comando(sql, cn)
+        
+        If (rs.RecordCount <> 0) Then
+            rs.MoveFirst
+            Do While rs.EOF = False
+                Varalf = rs.Fields(0)
+                rs.MoveNext
+            Loop
+        End If
+        
+        lstInfo.AddItem "Fecha de ingreso a la escuela: " & Varalf
+        
+        sql = "select fecha, ra.HoraEntrada Hora_de_llegada, h.HoraEntrada Horario_de_entrada from RegistroAsistencia ra, instructor i, persona p, CursoFecha cf, horario h Where (ra.idCF = cf.idCF) and (cf.NHorario=h.NHorario) and (ra.idPersona=p.idPersona) and (p.idPersona=i.idPersona) and (i.idInstructor= " & txtInstructor.Text & ")"
+        Call Ejecutar_Comando(sql, cn)
+        
+        Set dgAsistencia.DataSource = rs 'arreglar error
+        
+        sql = "select NJustificativo, FJustificada from justificativo j, RegistroAsistencia ra, persona p, instructor i where (ra.CodAsis=j.CodAsis) and (p.idPersona=i.idPersona) and (ra.idPersona=p.idPersona) and (i.idInstructor=" & txtInstructor.Text & ")"
+        Call Ejecutar_Comando(sql, cn)
+        
+        Set dgJustificativo.DataSource = rs
+    End If
+End If
+
+End Sub
+
+Private Sub cmdListaInstructor_Click()
+Form9.Show
+sql = "select idInstructor, nombre, apellido, dni, email, tel, direccion from instructor i, persona p where p.idPersona=i.idPersona order by idInstructor"
+Call Ejecutar_Comando(sql, cn)
+
+Set Form9.dgAlumno.DataSource = rs
+End Sub
+
+Private Sub cmdVolver_Click()
+txtInstructor.Text = ""
+lblInfo.Visible = False
+lstInfo.Visible = False
+dgAsistencia.Visible = False
+dgJustificativo.Visible = False
+lstInfo.Clear
+dgAsistencia.ClearFields
+dgJustificativo.ClearFields
+
+Form3.Visible = False
+Form0.Visible = True
+End Sub
+
+Private Sub dgAsistencia_Click()
+
+End Sub
+
+Private Sub Form_Activate()
+txtInstructor.SetFocus
+End Sub
