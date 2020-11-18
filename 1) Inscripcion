@@ -1,0 +1,17 @@
+Private Sub Form_Activate()
+
+    Set rs = New ADODB.Recordset
+    With rs
+        .CursorLocation = adUseClient
+        .Open "curso", cn, adOpenStatic, adLockReadOnly, adCmdTable
+    End With
+End Sub
+
+Private Sub Form_Load()
+Form1.Hide
+DESBLOQUEO.Show
+
+cont = 0
+
+Call Iniciar_Conexion
+End Sub
