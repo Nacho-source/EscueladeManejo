@@ -1,0 +1,5 @@
+Private Sub cmdImprimir_Click()
+formComprobantePagoRotura.PrintForm
+Form11.Hide
+Form0.Show
+End Sub
