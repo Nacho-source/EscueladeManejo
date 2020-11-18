@@ -1,0 +1,140 @@
+Private Sub cmdCobro_Click()
+Form0.Hide
+Form2.Show
+flag = 0
+End Sub
+
+Private Sub cmdGestion_Click()
+Form0.Hide
+With Form5
+
+.Show
+.txtCurso.Enabled = True
+.txtidAlumno.Enabled = True
+.txtCurso.Text = ""
+.txtidAlumno.Text = ""
+
+End With
+End Sub
+
+Private Sub cmdGestNota_Click()
+Form7.Show
+Form0.Hide
+End Sub
+
+Private Sub cmdInscripcion_Click()
+Form0.Hide
+With Form1
+.Show
+
+cont = 0
+
+.frmIngreso.Visible = True
+
+
+.frmVerificarAlumno.Visible = False
+.txtNombre.Text = ""
+.txtApellido.Text = ""
+.txtDireccion.Text = ""
+.txtDNI.Text = ""
+.txtEmail.Text = ""
+.txtTelefono.Text = ""
+.frmAsignarCurso.Visible = False
+.frmAsignarEspera.Visible = False
+.frmEspera.Visible = False
+.frmGenerarComprobante.Visible = False
+.frmGenerarComprobanteIns.Visible = False
+.frmQuitarEspera.Visible = False
+.frmVerificarAlumno.Visible = False
+
+End With
+
+End Sub
+
+Private Sub cmdLiquidacion_Click()
+Form0.Hide
+Form3.Show
+End Sub
+
+Private Sub cmdPagoRotura_Click()
+Form10.Show
+Form0.Hide
+
+End Sub
+
+Private Sub cmdProceso_Click()
+
+Form0.Hide
+Form8.Show
+
+With Form8
+
+    .lstCierreCaja.Clear
+    
+    Dia = Format(Date, "d")
+    Mes = Format(Date, "m")
+    Select Case Mes
+        Case 1, 3, 5, 7, 8, 10, 11, 12
+        If (Dia = 31) Then
+            .cmdMontoSalida.Visible = True
+        Else
+            .cmdMontoEntrada.Visible = True
+        End If
+        
+        Case 4, 6, 9, 11
+        If (Dia = 30) Then
+            .cmdMontoSalida.Visible = True
+        Else
+            .cmdMontoEntrada.Visible = True
+        End If
+        
+        Case 2
+        If (Dia = 28 Or Dia = 29) Then
+            .cmdMontoSalida.Visible = True
+        Else
+            .cmdMontoEntrada.Visible = True
+        End If
+    End Select
+End With
+
+End Sub
+
+Private Sub cmdRegistro_Click()
+Form0.Hide
+Form7.Show
+End Sub
+
+Private Sub cmdRevision_Click()
+Form0.Hide
+Form6.Show
+flag = 0
+End Sub
+
+Private Sub cmdToma_Click()
+Form0.Hide
+Form4.Show
+Form4.txtHora = Time
+Form4.txtHorario = Time
+End Sub
+
+Private Sub cmdVolver_Click()
+Form0.Hide
+DESBLOQUEO.Show
+End Sub
+
+Private Sub Form_Load()
+Form0.Show
+Form1.Hide
+Form2.Hide
+Form5.Hide
+Form6.Hide
+Form7.Hide
+Form8.Hide
+formCertAp.Hide
+formCompIns.Hide
+formComprobanteEspera.Hide
+formFacturaCobro.Hide
+formInformeDesapruebo.Hide
+formVehiculos.Hide
+End Sub
+
