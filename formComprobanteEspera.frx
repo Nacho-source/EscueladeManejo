@@ -1,0 +1,9 @@
+Private Sub cmdImprimir_Click()
+cmdImprimir.Visible = False
+formComprobanteEspera.PrintForm
+formComprobanteEspera.Visible = False
+Form0.Visible = True
+
+MsgBox ("Su comprobante de espera fue impreso exitosamente.")
+
+End Sub
