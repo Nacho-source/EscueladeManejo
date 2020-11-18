@@ -1,0 +1,6 @@
+Private Sub cmdImprimir_Click()
+cmdImprimir.Visible = False
+formInformeDesapruebo.PrintForm
+formInformeDesapruebo.Hide
+Form0.Show
+End Sub
