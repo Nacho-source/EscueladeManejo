@@ -1,0 +1,116 @@
+Private Sub cmdMontoEntrada_Click()
+lblEntrada.Visible = True
+txtEntrada.Visible = True
+
+sql = "select NPago from pago where FPago = curdate()"
+Call Ejecutar_Comando(sql, cn)
+
+If (rs.RecordCount <> 0) Then
+    flag = 1
+End If
+
+sql = "select CodRotura from pagorotura where FPago=curdate()"
+Call Ejecutar_Comando(sql, cn)
+
+If (rs.RecordCount <> 0 Or flag = 1) Then
+    If (rs.RecordCount <> 0) Then
+        sql = "select monto from rotura r, pagorotura pr where r.codrotura=pr.codrotura and fpago=curdate()"
+        Call Ejecutar_Comando(sql, cn)
+        
+        If (rs.RecordCount <> 0) Then
+            rs.MoveFirst
+            Do While rs.EOF = False
+                Var2 = Var2 + Val(rs.Fields(0))
+                rs.MoveNext
+            Loop
+        End If
+    End If
+    
+    If (flag = 1) Then
+        sql = "select (Monto) from Pago Where FPago=(select curdate())"
+        Call Ejecutar_Comando(sql, cn)
+        
+        rs.MoveFirst
+        Do While rs.EOF = False
+            Var = Var + Val(rs.Fields(0))
+            rs.MoveNext
+        Loop
+    End If
+    
+    Var3 = Var + Var2
+    
+Else
+    msj = MsgBox("No hubo entradas en el día.", vbExclamation)
+End If
+
+txtEntrada.Text = Var3
+Entrada = Val(Var3)
+
+cmdMontoEntrada.Visible = False
+cmdSaldoFinal.Visible = True
+
+End Sub
+
+Private Sub cmdMontoSalida_Click()
+lblSalida.Visible = True
+txtSalida.Visible = True
+
+Mes = Format(Date, "m")
+
+sql = "select sum(monto) from sueldo where (month(curdate())=" & Mes & ")"
+Call Ejecutar_Comando
+
+If (rs.RecordCount <> 0) Then
+    rs.MoveFirst
+    Do While rs.EOF = False
+        Var = Val(rs.Fields(0))
+        rs.MoveNext
+    Loop
+End If
+
+txtSalida.Text = Var
+Salida = Val(Var)
+
+cmdMontoEntrada.Visible = True
+cmdMontoSalida.Visible = False
+
+End Sub
+
+Private Sub cmdSaldoFinal_Click()
+
+sql = "select SaldoInicial from caja where FCaja=curdate()"
+Call Ejecutar_Comando(sql, cn)
+
+If (rs.RecordCount <> 0) Then
+    rs.MoveFirst
+    Do While rs.EOF = False
+        Var = Val(rs.Fields(0))
+        rs.MoveNext
+    Loop
+End If
+
+Var = Val(Var)
+Var2 = Var + Entrada
+
+
+sql = "insert into Caja values ('', curdate(), 0, " & Var2 & ", " & Entrada & ", " & Salida & ")"
+Call Ejecutar_Comando(sql, cn)
+
+lstCierreCaja.AddItem "Fecha: " & Date
+lstCierreCaja.AddItem "Saldo Inicial del día: " & 0
+lstCierreCaja.AddItem "Saldo Final del día: " & Var2
+lstCierreCaja.AddItem "Total de ingresos del día: " & Entrada
+lstCierreCaja.AddItem "Total de egresos del día: " & Salida
+
+lblEntrada.Visible = False
+lblSalida.Visible = False
+txtEntrada.Visible = False
+txtSalida.Visible = False
+cmdSaldoFinal.Visible = False
+
+End Sub
+
+Private Sub cmdVolver_Click()
+Form8.Hide
+Form0.Show
+End Sub
