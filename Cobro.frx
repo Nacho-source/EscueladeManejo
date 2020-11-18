@@ -1,0 +1,7 @@
+Private Sub cmdImprimir_Click()
+formFacturaCobro.Visible = False
+Form0.Visible = True
+cmdImprimir.Visible = False
+formFacturaCobro.PrintForm
+Form2.txtidAlumno.Enabled = True
+End Sub
