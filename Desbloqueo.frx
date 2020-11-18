@@ -1,0 +1,42 @@
+Private Sub cmdDesbloquar_Click()
+Dim PassWord As String
+
+sql = "select contraseña from contraseña where NContraseña=(select max(NContraseña) from contraseña)"
+Call Ejecutar_Comando(sql, cn)
+
+If (rs.RecordCount <> 0) Then
+    rs.MoveFirst
+    Do While rs.EOF = False
+        varlong = Val(rs.Fields(0))
+        rs.MoveNext
+    Loop
+End If
+
+
+If ((Val(txtContraseña.Text) = varlong)) Then
+    MsgBox ("Bienvenido a la Escuela de Manejo Mascher")
+    If (flagpass = 0) Then
+        Call inputbox_Password(DESBLOQUEO, "*")
+        
+        PassWord = InputBox("Ingrese nueva contraseña(numérica):", App.Title)
+    
+        sql = "insert into contraseña values(''," & Val(PassWord) & ")"
+        Call Ejecutar_Comando(sql, cn)
+        
+        flagpass = 1
+    End If
+    
+    Form0.Show
+    DESBLOQUEO.Hide
+Else
+    
+    msj = MsgBox("La contraseña no es correcta", , "ERROR")
+End If
+
+End Sub
+
+
+Private Sub Form_Activate()
+txtContraseña.SetFocus
+Call Iniciar_Conexion
+End Sub
