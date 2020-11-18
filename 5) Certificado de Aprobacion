@@ -1,0 +1,234 @@
+Private Sub cmdAlumno_Click()
+Form9.Show
+sql = "select idAlumno, nombre, apellido, dni, email, tel, direccion from alumno a, persona p where p.idPersona=a.idPersona order by idAlumno"
+Call Ejecutar_Comando(sql, cn)
+
+Set Form9.dgAlumno.DataSource = rs
+
+End Sub
+
+Private Sub cmdCurso_Click()
+Form9.Show
+sql = "select c.*, h.dia, h.horaentrada, h.horasalida from curso c, horario h, cursofecha cf where (cf.ncurso=c.NCurso) and (cf.nhorario=h.nhorario)"
+Call Ejecutar_Comando(sql, cn)
+
+Set Form9.dgAlumno.DataSource = rs
+
+End Sub
+
+Private Sub cmdVerificar_Click()
+If (txtidAlumno.Text = "" Or txtCurso.Text = "") Then
+    msj = MsgBox("INGRESE DATOS", vbExclamation, "ERROR")
+Else
+    
+    sql = "select * from alumno a, curso c, alumnocurso ac, cursofecha cf where (a.idAlumno=ac.idAlumno) and (c.NCurso=cf.NCurso) and (a.idAlumno='" & txtidAlumno.Text & "') and (c.NCurso='" & txtCurso.Text & "')"
+    Call Ejecutar_Comando(sql, cn)
+    
+    If (rs.RecordCount = 0) Then
+        msj = MsgBox("LOS DATOS NO COINCIDEN. REVISAR INGRESOS", vbCritical, "ERROR")
+    Else
+        
+        Form5.Hide
+        txtidAlumno.Enabled = False
+        txtCurso.Enabled = False
+        
+        sql = "select aprobado from AlumnoCurso ac, CursoFecha cf, curso c Where cf.idCF = ac.idCF and c.NCurso = cf.NCurso and idAlumno=" & txtidAlumno.Text & " and c.NCurso= " & txtCurso.Text & ""
+        Call Ejecutar_Comando(sql, cn)
+        
+        If (rs.RecordCount <> 0) Then
+            rs.MoveFirst
+            Do While rs.EOF = False
+                Var = Val(rs.Fields(0))
+                rs.MoveNext
+            Loop
+        End If
+        
+        If (Var = 1) Then
+            MsgBox ("El curso está aprobado")
+            With formCertAp
+            .Show
+            
+            sql = "select apellido from persona p, alumno a where (idAlumno= " & txtidAlumno.Text & ") and (p.idPersona=a.idPersona)"
+            Call Ejecutar_Comando(sql, cn)
+            
+            If (rs.RecordCount <> 0) Then
+                rs.MoveFirst
+                Do While rs.EOF = False
+                    Varalf = rs.Fields(0)
+                    rs.MoveNext
+                Loop
+            End If
+            
+            .lblApellido.Caption = Varalf
+            
+            sql = "select nombre from persona p, alumno a where (idAlumno= " & txtidAlumno.Text & ") and (p.idPersona=a.idPersona)"
+            Call Ejecutar_Comando(sql, cn)
+            
+            If (rs.RecordCount <> 0) Then
+               rs.MoveFirst
+               Do While rs.EOF = False
+                   Varalf = rs.Fields(0)
+                   rs.MoveNext
+               Loop
+            End If
+            
+            .lblNombre.Caption = Varalf
+            
+            sql = "select dni from persona p, alumno a where (idAlumno= " & txtidAlumno.Text & ") and (p.idPersona=a.idPersona)"
+            Call Ejecutar_Comando(sql, cn)
+            
+            If (rs.RecordCount <> 0) Then
+               rs.MoveFirst
+               Do While rs.EOF = False
+                   Varalf = rs.Fields(0)
+                   rs.MoveNext
+               Loop
+            End If
+            
+            .lblDNI.Caption = Varalf
+            
+            sql = "select nombre from curso where NCurso=" & txtCurso.Text & ""
+            Call Ejecutar_Comando(sql, cn)
+            
+            If (rs.RecordCount <> 0) Then
+               rs.MoveFirst
+               Do While rs.EOF = False
+                   Varalf = rs.Fields(0)
+                   rs.MoveNext
+               Loop
+            End If
+            
+            .lblCurso.Caption = Varalf
+            
+            sql = "select curdate()"
+            Call Ejecutar_Comando(sql, cn)
+            
+            If (rs.RecordCount <> 0) Then
+               rs.MoveFirst
+               Do While rs.EOF = False
+                   Varalf = rs.Fields(0)
+                   rs.MoveNext
+               Loop
+            End If
+            
+            .lblFecha.Caption = Varalf
+            
+            sql = "select nota from evaluacion e, curso c where (idAlumno=" & Val(txtidAlumno.Text) & ") and (c.NCurso='" & txtCurso.Text & "') and (c.NCurso=e.NCurso)"
+            Call Ejecutar_Comando(sql, cn)
+        
+            If (rs.RecordCount <> 0) Then
+                rs.MoveFirst
+                Do While rs.EOF = False
+                    varfloat = Val(rs.Fields(0))
+                    rs.MoveNext
+                Loop
+            End If
+            
+            .lblCalificacion = varfloat
+            
+            End With
+            
+        Else
+            MsgBox ("El curso no está aprobado")
+            With formInformeDesapruebo
+            
+            .Show
+            
+            sql = "select apellido from persona p, alumno a where (idAlumno= " & txtidAlumno.Text & ") and (p.idPersona=a.idPersona)"
+            Call Ejecutar_Comando(sql, cn)
+            
+            If (rs.RecordCount <> 0) Then
+                rs.MoveFirst
+                Do While rs.EOF = False
+                    Varalf = rs.Fields(0)
+                    rs.MoveNext
+                Loop
+            End If
+            
+            .lblApellido.Caption = Varalf
+            
+            sql = "select nombre from persona p, alumno a where (idAlumno= " & txtidAlumno.Text & ") and (p.idPersona=a.idPersona)"
+            Call Ejecutar_Comando(sql, cn)
+            
+            If (rs.RecordCount <> 0) Then
+               rs.MoveFirst
+               Do While rs.EOF = False
+                   Varalf = rs.Fields(0)
+                   rs.MoveNext
+               Loop
+            End If
+            
+            .lblNombre.Caption = Varalf
+            
+            sql = "select dni from persona p, alumno a where (idAlumno= " & txtidAlumno.Text & ") and (p.idPersona=a.idPersona)"
+            Call Ejecutar_Comando(sql, cn)
+            
+            If (rs.RecordCount <> 0) Then
+               rs.MoveFirst
+               Do While rs.EOF = False
+                   Varalf = rs.Fields(0)
+                   rs.MoveNext
+               Loop
+            End If
+            
+            .lblDNI.Caption = Varalf
+            
+            sql = "select nombre from curso where NCurso=" & txtCurso.Text & ""
+            Call Ejecutar_Comando(sql, cn)
+            
+            If (rs.RecordCount <> 0) Then
+               rs.MoveFirst
+               Do While rs.EOF = False
+                   Varalf = rs.Fields(0)
+                   rs.MoveNext
+               Loop
+            End If
+            
+            .lblCurso.Caption = Varalf
+            
+            sql = "select curdate()"
+            Call Ejecutar_Comando(sql, cn)
+            
+            If (rs.RecordCount <> 0) Then
+               rs.MoveFirst
+               Do While rs.EOF = False
+                   Varalf = rs.Fields(0)
+                   rs.MoveNext
+               Loop
+            End If
+            
+            .lblFecha.Caption = Varalf
+            
+            sql = "select nota from evaluacion e, curso c where (idAlumno=" & Val(txtidAlumno.Text) & ") and (c.NCurso='" & txtCurso.Text & "') and (c.NCurso=e.NCurso)"
+            Call Ejecutar_Comando(sql, cn)
+        
+            If (rs.RecordCount <> 0) Then
+                rs.MoveFirst
+                Do While rs.EOF = False
+                    varfloat = Val(rs.Fields(0))
+                    rs.MoveNext
+                Loop
+            End If
+            
+            .lblCalificacion = varfloat
+            
+            End With
+        End If
+    End If
+End If
+End Sub
+
+Private Sub cmdVolver_Click()
+Form0.Show
+Form5.Hide
+
+txtCurso.Enabled = True
+txtidAlumno.Enabled = True
+txtCurso.Text = ""
+txtidAlumno.Text = ""
+
+End Sub
+
+Private Sub Form_Activate()
+txtidAlumno.SetFocus
+End Sub
