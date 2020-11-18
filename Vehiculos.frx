@@ -1,0 +1,70 @@
+Private Sub cmdCargarGrilla_Click()
+lblVehi.Visible = True
+
+sql = "select v.CodVehiculo, matricula, marca, modelo from vehiculo v where utilizable=1 and  v.CodVehiculo not in(select v.CodVehiculo from vehiculo v, AlumnoVehiculo av where v.CodVehiculo=av.CodVehiculo)"
+Call Ejecutar_Comando(sql, cn)
+
+
+Set dgVehiculos.DataSource = rs
+
+    
+
+End Sub
+
+
+Private Sub cmdSiguiente_Click()
+
+If (Val(txtCodVehiculo.Text) = 0) Then
+    MsgBox ("SELEECIONE VEHICULO A UTILIZAR")
+Else
+    formVehiculos.Visible = False
+    Form1.Visible = True
+    
+    sql = "select marca from vehiculo where CodVehiculo = '" & txtCodVehiculo & "' "
+    Call Ejecutar_Comando(sql, cn)
+    
+    If (rs.RecordCount <> 0) Then
+        rs.MoveFirst
+        Do While rs.EOF = False
+            Varalf = rs.Fields(0)
+            rs.MoveNext
+        Loop
+    End If
+    
+    sql = "select modelo from vehiculo where CodVehiculo = '" & txtCodVehiculo & "' "
+    Call Ejecutar_Comando(sql, cn)
+    
+    If (rs.RecordCount <> 0) Then
+        rs.MoveFirst
+        Do While rs.EOF = False
+            Varalf2 = rs.Fields(0)
+            rs.MoveNext
+        Loop
+    End If
+    
+    sql = "select matricula from vehiculo where CodVehiculo = " & txtCodVehiculo & ""
+    Call Ejecutar_Comando(sql, cn)
+    
+    If (rs.RecordCount <> 0) Then
+        rs.MoveFirst
+        Do While rs.EOF = False
+            Varalf3 = rs.Fields(0)
+            rs.MoveNext
+        Loop
+    End If
+    
+    Form1.lstListaHorario.AddItem ""
+    Form1.lstListaHorario.AddItem "Marca del Vehiculo: " & Varalf
+    Form1.lstListaHorario.AddItem "Modelo del Vehiculo: " & Varalf2
+    Form1.lstListaHorario.AddItem "Matricula del Vehiculo: " & Varalf3
+      
+End If
+
+End Sub
+
+
+Private Sub dgVehiculos_Click()
+dgVehiculos.MarqueeStyle = dbgHighlightRowRaiseCell
+Var = dgVehiculos.Columns(0)
+txtCodVehiculo.Text = Var
+End Sub
