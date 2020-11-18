@@ -1,0 +1,165 @@
+Private Sub cmdGuardar_Click()
+msj = MsgBox("¿Está seguro de que desea guardar la información?", vbYesNo)
+If (Val(msj) = 6) Then
+    
+    sql = "select CodVehiculo from Vehiculo where matricula='" & txtMatricula.Text & "'"
+    Call Ejecutar_Comando(sql, cn)
+    
+    If (rs.RecordCount <> 0) Then
+        rs.MoveFirst
+        Do While rs.EOF = False
+            Var = Val(rs.Fields(0))
+            rs.MoveNext
+        Loop
+    End If
+    
+    If (Val(txtEstado.Text = 1)) Then
+        
+        sql = "update vehiculo set utilizable=1 and FRevision=curdate() where Matricula='" & txtMatricula.Text & "'"
+        Call Ejecutar_Comando(sql, cn)
+    Else
+        sql = "update vehiculo set utilizable=0 and FRevision=curdate() where matricula='" & txtMatricula.Text & "'"
+        Call Ejecutar_Comando(sql, cn)
+    End If
+    
+    
+    sql = "select codvehiculo from vehiculo where matricula='" & txtMatricula.Text & "'"
+    Call Ejecutar_Comando(sql, cn)
+    
+    If (rs.RecordCount <> 0) Then
+        rs.MoveFirst
+        Do While rs.EOF = False
+            Var = Val(rs.Fields(0))
+            rs.MoveNext
+        Loop
+    End If
+
+    sql = "insert into rotura values ('', curdate(), " & Var & ", " & Var2 & ", 0, " & Var3 & ")"
+    Call Ejecutar_Comando(sql, cn)
+    
+    MsgBox ("Los datos de la revisión fueron guardados con éxito")
+Else
+    MsgBox ("Los datos no han sido guardados")
+End If
+
+
+End Sub
+
+Private Sub cmdIngresar_Click()
+txtMatricula.Enabled = False
+txtEstado.Enabled = False
+
+cmdIngresar.Default = False
+cmdGuardar.Default = True
+
+
+If (txtMatricula.Text = Null Or txtEstado.Text = Null) Then
+    msj = MsgBox("¡Ingrese datos!", , "ERROR")
+Else
+    sql = "select CodVehiculo from Vehiculo where matricula='" & txtMatricula.Text & "'"
+    Call Ejecutar_Comando(sql, cn)
+    
+    If (rs.RecordCount <> 0) Then
+        rs.MoveFirst
+        Do While rs.EOF = False
+            Var = Val(rs.Fields(0))
+            rs.MoveNext
+        Loop
+        
+        If (txtEstado.Text <> 1 And txtEstado.Text <> 0) Then
+            msj = MsgBox("El dato 'UTILIZABLE' no es correcto", vbExclamation, "ERROR")
+        
+        Else
+                    
+            lstVehiculo.Clear
+                
+            lstVehiculo.AddItem "Codigo del Vehiculo: " & Var
+            lstVehiculo.AddItem "Matricula del Vehiculo: " & txtMatricula.Text
+            
+            sql = "select Marca from Vehiculo where matricula='" & txtMatricula.Text & "'"
+            Call Ejecutar_Comando(sql, cn)
+            
+            If (rs.RecordCount <> 0) Then
+                rs.MoveFirst
+                Do While rs.EOF = False
+                    Varalf = rs.Fields(0)
+                    rs.MoveNext
+                Loop
+            End If
+            
+            lstVehiculo.AddItem "Marca: " & Varalf
+            
+            sql = "select Modelo from Vehiculo where matricula='" & txtMatricula.Text & "'"
+            Call Ejecutar_Comando(sql, cn)
+            
+            If (rs.RecordCount <> 0) Then
+                rs.MoveFirst
+                Do While rs.EOF = False
+                    Varalf = rs.Fields(0)
+                    rs.MoveNext
+                Loop
+            End If
+            
+            lstVehiculo.AddItem "Modelo: " & Varalf
+            
+            If (Val(txtEstado.Text) = 1) Then
+                lstVehiculo.AddItem "Utilizable: Sí"
+            Else
+                lstVehiculo.AddItem "Utilizable: No"
+                msj = MsgBox("¿La rotura se debe a un daño ocasionado por un alumno?", vbYesNo)
+                If (Val(msj) = 6) Then
+                    msj = MsgBox("Selecccione un alumno de los de la lista a continuación", vbOKOnly)
+                    With Form9
+                    
+                    .Show
+                    sql = "select idAlumno, nombre, apellido, dni, email, tel, direccion from alumno a, persona p where p.idPersona=a.idPersona order by idAlumno"
+                    Call Ejecutar_Comando(sql, cn)
+                    
+                    Set .dgAlumno.DataSource = rs
+                    .lblAlumno.Visible = True
+                    .lblAlumno2.Visible = True
+                    .txtAlumno.Visible = True
+                    .cmdSiguiente.Visible = True
+                    .cmdCerrar.Visible = False
+                    
+                    End With
+                    
+                    
+                End If
+            End If
+               
+            lstVehiculo.AddItem "Fecha de Revision: " & Date
+        End If
+    Else
+        msj = MsgBox("El vehículo no está registrado en la Escuela de Manejo Mascher", vbExclamation)
+    
+End If
+End If
+
+End Sub
+
+Private Sub cmdVehiculo_Click()
+Form9.Show
+sql = "select select * from vehiculo"
+Call Ejecutar_Comando(sql, cn)
+
+Set Form9.dgAlumno.DataSource = rs
+End Sub
+
+Private Sub cmdVolver_Click()
+txtEstado.Text = ""
+txtMatricula.Text = ""
+txtEstado.Enabled = True
+txtMatricula.Enabled = True
+Form0.Show
+Form6.Hide
+cmdVolver.Visible = False
+lstVehiculo.Clear
+End Sub
+
+Private Sub Form_Activate()
+If (flag = 0) Then
+    txtMatricula.SetFocus
+    flag = 1
+End If
+End Sub
