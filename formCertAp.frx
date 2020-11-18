@@ -1,0 +1,6 @@
+Private Sub cmdImprimir_Click()
+cmdImprimir.Visible = False
+formCertAp.PrintForm
+formCertAp.Visible = False
+Form0.Visible = True
+End Sub
